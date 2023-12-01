@@ -1,0 +1,21 @@
+[project]
+name = "PS5_DIFUM_VISU"
+version = "0.0.1"
+authors = [
+  { name="Biolley Valentin", email="valentin.biolley@edu.hefr.ch" },
+]
+description = "Module visualisation of embeddings"
+readme = "README.md"
+requires-python = "==3.10"
+classifiers = [
+    "Programming Language :: Python :: 3.10",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+]
+
+[project.urls]
+Homepage = "https://gitlab.forge.hefr.ch/valentin.biolley/ps5_difum_module_visu"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
