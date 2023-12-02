@@ -246,7 +246,7 @@ def create_data_set_for_vis(embeddings,input_name,label=0, ref_label_idx=0):
     if len(embeddings)!=len(input_name):
         raise ValueError("Size of embeddings (", len(embeddings),") and size of prompt(", len(input_name),") is not equals")
     if label!=0:
-        if len(embeddings)!=len(labels):
+        if len(embeddings)!=len(label):
             raise ValueError("Size of embeddings (", len(embeddings),") and size of label(", len(label),") is not equals")
     # Create empty dataFrame for result
     data_to_vis=pd.DataFrame()
