@@ -333,14 +333,14 @@ def visualise_embedding(data, ref_label_idx=0):
     y_highlight_3D_max = data.loc[max, 'embedding_y_3D']
     z_highlight_3D_max = data.loc[max, 'embedding_z_3D']
 
-    # Display this sample in green
+    # Display the base sample in green
     fig.add_trace(go.Scatter(x=[x_highlight], y=[y_highlight], mode='markers', marker=dict(size=10, color='green'),
                              name="input de base: " + data["prompt"][ref_label_idx], visible="legendonly"))
-
+    # Display the min cosine similarity sample in green
     fig.add_trace(
         go.Scatter(x=[x_highlight_min], y=[y_highlight_min], mode='markers', marker=dict(size=10, color='orange'),
                    name="Similarity min: " + data["prompt"][min], visible="legendonly"))
-
+    # Display the max cosine similarity sample in green
     fig.add_trace(
         go.Scatter(x=[x_highlight_max], y=[y_highlight_max], mode='markers', marker=dict(size=10, color='yellow'),
                    name="Similarity max: " + data["prompt"][max], visible="legendonly"))
@@ -388,11 +388,11 @@ def visualise_embedding(data, ref_label_idx=0):
                                marker=dict(size=10, color='green'),
                                name="input de base: " + data["prompt"][ref_label_idx], visible="legendonly"))
 
-    fig.add_trace(go.Scatter3d(x=[x_highlight_3D_min], y=[y_highlight_3D_min], z=[y_highlight_3D_min], mode='markers',
+    fig.add_trace(go.Scatter3d(x=[x_highlight_3D_min], y=[y_highlight_3D_min], z=[z_highlight_3D_min], mode='markers',
                                marker=dict(size=10, color='orange'), name="Similarity min: " + data["prompt"][min],
                                visible="legendonly"))
 
-    fig.add_trace(go.Scatter3d(x=[x_highlight_3D_max], y=[y_highlight_3D_max], z=[y_highlight_3D_max], mode='markers',
+    fig.add_trace(go.Scatter3d(x=[x_highlight_3D_max], y=[y_highlight_3D_max], z=[z_highlight_3D_max], mode='markers',
                                marker=dict(size=10, color='yellow'), name="Similarity max: " + data["prompt"][max],
                                visible="legendonly"))
 
