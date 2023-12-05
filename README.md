@@ -21,9 +21,7 @@ Voici quelques méthodes utiles pour la générer les données nécessaires à l
 - read_file_label
 - read_dir_image
 - get_img_embedding_swin
-### Installation du module
-Pour pouvoir installer le module de visualisation, il faut le charger depuis le git grâce à la commande suivante :
-pip install git+https://gitlab.forge.hefr.ch/valentin.biolley/ps5_difum_module_visu
+
 ### Utilisation:
 
 Pour pouvoir visualiser des vecteurs d'embeddings, vous n'avez besoin que des fonctions suivantes :
@@ -32,3 +30,9 @@ Pour pouvoir visualiser des vecteurs d'embeddings, vous n'avez besoin que des fo
 - **visualise_embedding** qui permet de générer les graphiques.
 
 1 exemple de visualisation se trouvent à la fin du notebook dans le chapitre Test module visu.
+### Installation du module
+Pour pouvoir installer le module de visualisation, il faut le charger depuis le git grâce à la commande suivante :
+pip install git+https://gitlab.forge.hefr.ch/valentin.biolley/ps5_difum_module_visu
+
+### Structure du module:
+Le module donne accès aux mêmes fonctions présentent dans le noteBook, elles sont décrites ci-dessus.
