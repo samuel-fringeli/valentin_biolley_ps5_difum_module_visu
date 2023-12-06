@@ -84,10 +84,14 @@ def compute_cosine_similarities(embeddings_1, ref_label_idx=0, embeddings_2=None
 
     similarities = []
     # Compute cosine similarities between each embedding vector and the ref_label_idx embedding vector
-    for i in range(embeddings_2.size(0)):
-        current_vector = embeddings_2[i][-1]
-        similarity = cos(reference_vector, current_vector)
-        similarities.append(similarity.item())
+    if len(embeddings_1.shape) > 2 and len(embeddings_2.shape) > 2:
+        for i in range(embeddings_2.size(0)):
+            current_vector = embeddings_2[i][-1]
+            similarity = cos(reference_vector, current_vector)
+            similarities.append(similarity.item())
+    else:
+        similarities = np.array(
+            [cos(embeddings_2[ref_label_idx], embeddings_1[i]).detach().numpy() for i in range(len(embeddings_1))])
 
     return similarities
 
