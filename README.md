@@ -7,8 +7,9 @@ Ce guide a pour but de démontrer l'utilisation du module de visualisation PS5_D
 Veuillez suivre le readme.md d'installation du projet.
 
 ### Structure:
+Lien vers le notebook: https://gitlab.forge.hefr.ch/valentin.biolley/detecteur_incendie_ou_de_fumee_utilisant_les_foundation_models/-/blob/main/src/Grounding_dino_simple_NB/PS5_DFUM_VISU.ipynb?ref_type=heads 
 
-Ce notebook utilise les encodeurs Bert pour le text et Swin pour l'image. 
+Le notebook utilise les encodeurs Bert pour le text et Swin pour l'image. 
 
 Différents labels utilisés pour les tests se trouvent dans le dossier "file"
 ainsi que des images de tests se trouvent dans le dossier "images_fire_not_fire"
