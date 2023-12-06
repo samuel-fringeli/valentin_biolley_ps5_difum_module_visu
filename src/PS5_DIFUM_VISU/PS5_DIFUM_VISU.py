@@ -17,7 +17,8 @@ import plotly.graph_objects as go
 from PIL import Image
 import os
 
-def tokenizerLabels (labels,tokenizer):
+
+def tokenizerLabels(labels, tokenizer):
     """Tokenize the given labels
 
     Args:
@@ -27,14 +28,15 @@ def tokenizerLabels (labels,tokenizer):
     Returns:
         list: The list of tokens
     """
-    resArray =[]
+    resArray = []
     for label in labels:
         # Tokenization
         tokens = tokenizer(label, return_tensors="pt")
         resArray.append(tokenizer.convert_ids_to_tokens(tokens["input_ids"].squeeze().tolist()))
     return resArray
 
-def get_txt_embedding_bert(labels,model,tokenizer):
+
+def get_txt_embedding_bert(labels, model, tokenizer):
     """Computes the embeddings for the given labels
 
     Args:
@@ -54,7 +56,8 @@ def get_txt_embedding_bert(labels,model,tokenizer):
 
     return embeddings
 
-def compute_cosine_similarities(embeddings_1,ref_label_idx = 0,embeddings_2=None):
+
+def compute_cosine_similarities(embeddings_1, ref_label_idx=0, embeddings_2=None):
     """
     Compute similarities between a reference label and a list of labels using embeddings (txt or images).
 
@@ -70,12 +73,13 @@ def compute_cosine_similarities(embeddings_1,ref_label_idx = 0,embeddings_2=None
     # Create pythorch cosine similarity instance, use for compute the cosine similarity
     cos = torch.nn.CosineSimilarity(dim=-1)
     # Check if optional parameter embeddings_2 is given
-    if  embeddings_2 is None:
+    if embeddings_2 is None:
         # If not compute cosine similarity between embedding_1 and embedding_1
-        embeddings_2=embeddings_1
+        embeddings_2 = embeddings_1
     # If tensors are not the same size, throw an exception
     if embeddings_1.size(-1) != embeddings_2.size(-1):
-            raise ValueError("Size of embeddings 1 (",embeddings_1.shape,") and size of embedding2(",embeddings_2.shape,") is not equals")
+        raise ValueError("Size of embeddings 1 (", embeddings_1.shape, ") and size of embedding2(", embeddings_2.shape,
+                         ") is not equals")
     reference_vector = embeddings_1[ref_label_idx][-1]
 
     similarities = []
@@ -85,14 +89,10 @@ def compute_cosine_similarities(embeddings_1,ref_label_idx = 0,embeddings_2=None
         similarity = cos(reference_vector, current_vector)
         similarities.append(similarity.item())
 
-
-
-
     return similarities
 
 
-
-def get_TSNE (embeddings,component=2):
+def get_TSNE(embeddings, component=2):
     """
     Compute the TSNE of a tensor, reduce the dimension to n_component
 
@@ -103,24 +103,24 @@ def get_TSNE (embeddings,component=2):
         text_embeddings_TSNE (numpy.ndarray nD): An array nD who represent the tensor.
     """
     # Create sklearn TSNE instance
-    tsne = TSNE(random_state=1,n_components=component,metric="cosine",perplexity=2)
-    if len(embeddings.shape)>2:
-        total=[]
+    tsne = TSNE(random_state=1, n_components=component, metric="cosine", perplexity=2)
+    if len(embeddings.shape) > 2:
+        total = []
         for i in range(embeddings.size(0)):
             current_vector = embeddings[i][-1].detach().numpy()
             total.append(current_vector)
         total = np.array(total)
         # Apply TSNE
-        embeddings =tsne.fit_transform(total)
+        embeddings = tsne.fit_transform(total)
 
     else:
-        embeddings=embeddings.detach().numpy()
-        embeddings =tsne.fit_transform(embeddings)
-
+        embeddings = embeddings.detach().numpy()
+        embeddings = tsne.fit_transform(embeddings)
 
     return embeddings
 
-def get_PCA (embeddings,component=2):
+
+def get_PCA(embeddings, component=2):
     """
     Compute the PCA of a tensor, reduce the dimension to n_component.
 
@@ -132,23 +132,23 @@ def get_PCA (embeddings,component=2):
     """
     # Create sklearn PCA instance
     pca = PCA(n_components=component)
-    if len(embeddings.shape)>2:
-        total=[]
+    if len(embeddings.shape) > 2:
+        total = []
         for i in range(embeddings.size(0)):
             current_vector = embeddings[i][-1].detach().numpy()
             total.append(current_vector)
         total = np.array(total)
-        embeddings=total
-         # Apply PCA
-        embeddings =pca.fit_transform(embeddings)
+        embeddings = total
+        # Apply PCA
+        embeddings = pca.fit_transform(embeddings)
     else:
-        embeddings=embeddings.detach().numpy()
-        embeddings =pca.fit_transform(embeddings)
-
+        embeddings = embeddings.detach().numpy()
+        embeddings = pca.fit_transform(embeddings)
 
     return embeddings
 
-def get_img_embedding_swin (urls,model,image_processor):
+
+def get_img_embedding_swin(urls, model, image_processor):
     """Computes the embeddings for the given image locate in urls
 
     Args:
@@ -166,7 +166,7 @@ def get_img_embedding_swin (urls,model,image_processor):
             image = image.convert('RGB')
             new_image_path = os.path.splitext(image_path)[0] + ".jpg"
             image.save(new_image_path)
-            image=Image.open(new_image_path)
+            image = Image.open(new_image_path)
         else:
             image = Image.open(image_path)
 
@@ -180,7 +180,8 @@ def get_img_embedding_swin (urls,model,image_processor):
     tensor_embeddings = torch.stack(embeddings_img)
     return tensor_embeddings
 
-def read_file_label (url_file):
+
+def read_file_label(url_file):
     """Read label in a file
 
     Args:
@@ -190,9 +191,10 @@ def read_file_label (url_file):
         lines(list[str]): The list of labels
     """
     # Open file and return each line in an array
-    with open(url_file,'r') as f:
+    with open(url_file, 'r') as f:
         lines = f.read().splitlines()
         return lines
+
 
 def read_dir_image(url_dir):
     """Read images present in directory and build urls to access all images
@@ -203,16 +205,17 @@ def read_dir_image(url_dir):
     Returns:
         res(list[str]): The list of urls images contain in the directory
     """
-    res=[]
+    res = []
     # Enumerate all file present in the directory
     files = os.listdir(url_dir)
     # For each file, build url to access all images
     for file in files:
-        final_url=url_dir+file
+        final_url = url_dir + file
         res.append(final_url)
     return res
 
-def save_tensor(embedding,label,path):
+
+def save_tensor(embedding, label, path):
     """Save a tensor on /path_label.pt on disk
 
     Args:
@@ -223,9 +226,10 @@ def save_tensor(embedding,label,path):
     Returns:
         -
     """
-    torch.save(embedding,path+"_"+label+".pt")
+    torch.save(embedding, path + "_" + label + ".pt")
 
-def load_tensor(path,label):
+
+def load_tensor(path, label):
     """Load tensor from disk
 
     Args:
@@ -238,18 +242,17 @@ def load_tensor(path,label):
     """
     # Enumerate all file present in the directory
     files = os.listdir(path)
-    labels=[]
-    tensors=[]
+    labels = []
+    tensors = []
     # for each file get only file that match the label
     for file in files:
-        file_name = os.path.splitext(os.path.basename(path+file))[0]
-        label_split=file_name.split('_', 1)
-        if label_split[1]==label:
+        file_name = os.path.splitext(os.path.basename(path + file))[0]
+        label_split = file_name.split('_', 1)
+        if label_split[1] == label:
             labels.append(label_split[1])
-            tensors.append(torch.load(path+"/"+file))
+            tensors.append(torch.load(path + "/" + file))
 
-    return tensors,labels
-
+    return tensors, labels
 
 
 def create_data_set_for_vis(embeddings, input_name, label=0, ref_label_idx=0):
@@ -341,6 +344,10 @@ def visualise_embedding(data, ref_label_idx=0):
     y_highlight_3D_min = data.loc[min, 'embedding_y_3D']
     z_highlight_3D_min = data.loc[min, 'embedding_z_3D']
 
+    x_highlight_3D = data.loc[highlight, 'embedding_X_3D']
+    y_highlight_3D = data.loc[highlight, 'embedding_y_3D']
+    z_highlight_3D = data.loc[highlight, 'embedding_z_3D']
+
     x_highlight_3D_max = data.loc[max, 'embedding_X_3D']
     y_highlight_3D_max = data.loc[max, 'embedding_y_3D']
     z_highlight_3D_max = data.loc[max, 'embedding_z_3D']
@@ -396,7 +403,7 @@ def visualise_embedding(data, ref_label_idx=0):
         # don't display color
         fig = px.scatter_3d(data, x='embedding_X_3D', y='embedding_y_3D', z='embedding_z_3D', hover_name="prompt")
 
-    fig.add_trace(go.Scatter3d(x=[x_highlight], y=[y_highlight], z=[z_highlight], mode='markers',
+    fig.add_trace(go.Scatter3d(x=[x_highlight_3D], y=[y_highlight_3D], z=[z_highlight_3D], mode='markers',
                                marker=dict(size=10, color='green'),
                                name="input de base: " + data["prompt"][ref_label_idx], visible="legendonly"))
 
