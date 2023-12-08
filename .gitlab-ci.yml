@@ -1,16 +1,6 @@
 stages:
-  - build
   - test
 
-build:
-  stage: build
-  image: python:3.10
-  script:
-    - pip install setuptools twine
-    - python -m build
-  artifacts:
-    paths:
-      - dist/
 
 
 test:
