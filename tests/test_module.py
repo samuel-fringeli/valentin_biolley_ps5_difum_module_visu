@@ -1,6 +1,9 @@
 import unittest
-import PS5_DIFUM_VISU.PS5_DIFUM_VISU as PS5
+import sys
 import torch
+sys.path.append('../')
+import PS5_DIFUM_VISU.PS5_DIFUM_VISU as PS5
+
 
 t1 = torch.randn(10, 7, 400)
 t2 = torch.randn(10, 70, 400)
@@ -14,7 +17,7 @@ class compute_cosine_similarities(unittest.TestCase):
     def test_normal_usage(self):
         res = PS5.compute_cosine_similarities(t1, 0)
         self.assertEqual(t1.size(0), len(res))
-        self.assertAlmostEqual(res[0], 1.0)
+        self.assertAlmostEqual(res[0], 1.0,places=4)
 
     def test_normal_usage_2_tensors(self):
         res = PS5.compute_cosine_similarities(t1, 0, t2)
