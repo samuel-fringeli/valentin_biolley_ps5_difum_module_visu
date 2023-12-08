@@ -1,0 +1,21 @@
+stages:
+  - build
+  - test
+
+build:
+  stage: build
+  image: python:3.10
+  script:
+    - py -m build
+  tags:
+    - python
+
+test:
+  stage: test
+  image: python:3.10
+  script:
+    - py -m build
+    - pip install -r requirements.txt
+    - python -m unittest test_calcul_valeur.py
+  tags:
+    - python

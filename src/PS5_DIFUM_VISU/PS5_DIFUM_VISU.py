@@ -96,7 +96,7 @@ def compute_cosine_similarities(embeddings_1, ref_label_idx=0, embeddings_2=None
     return similarities
 
 
-def get_TSNE(embeddings, component=2):
+def get_TSNE (embeddings,component=2):
     """
     Compute the TSNE of a tensor, reduce the dimension to n_component
 
@@ -107,19 +107,21 @@ def get_TSNE(embeddings, component=2):
         text_embeddings_TSNE (numpy.ndarray nD): An array nD who represent the tensor.
     """
     # Create sklearn TSNE instance
-    tsne = TSNE(random_state=1, n_components=component, metric="cosine", perplexity=2)
-    if len(embeddings.shape) > 2:
-        total = []
+
+    tsne = TSNE(random_state=1,n_components=component,metric="cosine",perplexity=embeddings.size(0)/2)
+    if len(embeddings.shape)>2:
+        total=[]
         for i in range(embeddings.size(0)):
             current_vector = embeddings[i][-1].detach().numpy()
             total.append(current_vector)
         total = np.array(total)
         # Apply TSNE
-        embeddings = tsne.fit_transform(total)
+        embeddings =tsne.fit_transform(total)
 
     else:
-        embeddings = embeddings.detach().numpy()
-        embeddings = tsne.fit_transform(embeddings)
+        embeddings=embeddings.detach().numpy()
+        embeddings =tsne.fit_transform(embeddings)
+
 
     return embeddings
 
