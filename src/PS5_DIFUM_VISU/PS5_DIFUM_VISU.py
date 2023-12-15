@@ -5,7 +5,7 @@ Module of Visualisation of embedding vectors
 
 Autor : Biolley
 Email : valentin.biolley@edu.hefr.ch
-Date : 01.12.23
+Date : 15.12.23
 """
 import numpy as np
 import torch
@@ -16,28 +16,40 @@ import plotly.express as px
 import plotly.graph_objects as go
 from PIL import Image
 import os
+from transformers import AutoImageProcessor,PreTrainedTokenizerBase
 
 
-def tokenizerLabels(labels, tokenizer):
-    """Tokenize the given labels
+class MyTokenizer:
+    def __init__(self, tokenizer: PreTrainedTokenizerBase):
+        if isinstance(tokenizer, PreTrainedTokenizerBase):
+            self.tokenizer = tokenizer
+        else:
+            raise ValueError("The 'tokenizer' argument must be an instance of PreTrainedTokenizerBase.")
 
-    Args:
-        labels(list[str]): The labels to tokenize
-        tokenizer(object): Model tokenizer
+    def tokenize_labels(self, labels):
+        """Tokenize the given labels
 
-    Returns:
-        list: The list of tokens
-    """
-    resArray = []
-    for label in labels:
-        # Tokenization
-        tokens = tokenizer(label, return_tensors="pt")
-        resArray.append(tokenizer.convert_ids_to_tokens(tokens["input_ids"].squeeze().tolist()))
-    return resArray
+        Args:
+            labels(list[str]): The labels to tokenize
+            tokenizer(object): Model tokenizer
+
+        Returns:
+            list: The list of tokens
+        """
+        resArray = []
+        for label in labels:
+            tokens = self.tokenizer(label, return_tensors="pt")
+            resArray.append(self.tokenizer.convert_ids_to_tokens(tokens["input_ids"].squeeze().tolist()))
+        return resArray
 
 
-def get_txt_embedding_bert(labels, model, tokenizer):
-    """Computes the embeddings for the given labels
+class MyModel_text:
+    def __init__(self, model: PreTrainedModel, tokenizer: PreTrainedTokenizerBase):
+        self.model = model
+        self.tokenizer = tokenizer
+
+    def get_txt_embedding(self, labels):
+        """Computes the embeddings for the given labels
 
     Args:
         labels(list[str]): The labels to encode
@@ -46,15 +58,49 @@ def get_txt_embedding_bert(labels, model, tokenizer):
 
     Returns:
         tensor: The tensor of encoded labels
-    """
-    # Tokenization of labels
-    tokens = tokenizer(labels, return_tensors="pt", padding=True, truncation=True)
-    # Obtaining the embeddings
-    outputs = model(**tokens)
-    # Get the last_hidden_state
-    embeddings = outputs.last_hidden_state
+        """
+        tokens = self.tokenizer(labels, return_tensors="pt", padding=True, truncation=True)
+        outputs = self.model(**tokens)
+        embeddings = outputs.last_hidden_state
+        return embeddings
 
-    return embeddings
+
+class MyModel_img:
+    def __init__(self, model: PreTrainedModel, image_processor: AutoImageProcessor.from_pretrained):
+        self.model = model
+        self.image_processor = image_processor
+
+    def get_img_embedding(self, urls):
+        """Computes the embeddings for the given image locate in urls
+
+    Args:
+        urls(list[str]): The urls of images to encode
+
+    Returns:
+        tensor: The tensor of encoded images
+     """
+
+        embeddings_img = []
+
+        for image_path in urls:
+            if image_path.lower().endswith('.png'):
+                image = Image.open(image_path)
+                image = image.convert('RGB')
+                new_image_path = os.path.splitext(image_path)[0] + ".jpg"
+                image.save(new_image_path)
+                image = Image.open(new_image_path)
+            else:
+                image = Image.open(image_path)
+
+            inputs = self.image_processor(image, return_tensors="pt")
+
+            with torch.no_grad():
+                outputs = self.model(**inputs)
+                embedding = outputs.last_hidden_state.mean(dim=1).squeeze()
+                embeddings_img.append(embedding)
+
+        tensor_embeddings = torch.stack(embeddings_img)
+        return tensor_embeddings
 
 
 def compute_cosine_similarities(embeddings_1, ref_label_idx=0, embeddings_2=None):
@@ -96,7 +142,7 @@ def compute_cosine_similarities(embeddings_1, ref_label_idx=0, embeddings_2=None
     return similarities
 
 
-def get_TSNE (embeddings,component=2):
+def get_TSNE(embeddings, component=2):
     """
     Compute the TSNE of a tensor, reduce the dimension to n_component
 
@@ -107,21 +153,21 @@ def get_TSNE (embeddings,component=2):
         text_embeddings_TSNE (numpy.ndarray nD): An array nD who represent the tensor.
     """
     # Create sklearn TSNE instance
-
-    tsne = TSNE(random_state=1,n_components=component,metric="cosine",perplexity=embeddings.size(0)/2)
-    if len(embeddings.shape)>2:
-        total=[]
+    if embeddings.size(0) <= 3:
+        raise ValueError("Size of embeddings  (", embeddings.size(0), ") is smaller than 3")
+    tsne = TSNE(random_state=1, n_components=component, metric="cosine", perplexity=embeddings.size(0) / 2)
+    if len(embeddings.shape) > 2:
+        total = []
         for i in range(embeddings.size(0)):
             current_vector = embeddings[i][-1].detach().numpy()
             total.append(current_vector)
         total = np.array(total)
         # Apply TSNE
-        embeddings =tsne.fit_transform(total)
+        embeddings = tsne.fit_transform(total)
 
     else:
-        embeddings=embeddings.detach().numpy()
-        embeddings =tsne.fit_transform(embeddings)
-
+        embeddings = embeddings.detach().numpy()
+        embeddings = tsne.fit_transform(embeddings)
 
     return embeddings
 
@@ -152,39 +198,6 @@ def get_PCA(embeddings, component=2):
         embeddings = pca.fit_transform(embeddings)
 
     return embeddings
-
-
-def get_img_embedding_swin(urls, model, image_processor):
-    """Computes the embeddings for the given image locate in urls
-
-    Args:
-        urls(list[str]): The urls of images to encode
-
-    Returns:
-        tensor: The tensor of encoded images
-    """
-
-    embeddings_img = []
-
-    for image_path in urls:
-        if image_path.lower().endswith('.png'):
-            image = Image.open(image_path)
-            image = image.convert('RGB')
-            new_image_path = os.path.splitext(image_path)[0] + ".jpg"
-            image.save(new_image_path)
-            image = Image.open(new_image_path)
-        else:
-            image = Image.open(image_path)
-
-        inputs = image_processor(image, return_tensors="pt")
-
-        with torch.no_grad():
-            outputs = model(**inputs)
-            embedding = outputs.last_hidden_state.mean(dim=1).squeeze()
-            embeddings_img.append(embedding)
-
-    tensor_embeddings = torch.stack(embeddings_img)
-    return tensor_embeddings
 
 
 def read_file_label(url_file):
