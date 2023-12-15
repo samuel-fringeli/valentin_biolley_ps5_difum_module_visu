@@ -16,7 +16,7 @@ import plotly.express as px
 import plotly.graph_objects as go
 from PIL import Image
 import os
-from transformers import AutoImageProcessor,PreTrainedTokenizerBase
+from transformers import AutoImageProcessor, PreTrainedTokenizerBase, PreTrainedModel
 
 
 class MyTokenizer:
