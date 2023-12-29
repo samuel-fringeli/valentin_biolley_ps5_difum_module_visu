@@ -18,7 +18,7 @@ build:
   image: python:3.10
   script:
     - source myenv/bin/activate
-    - python -m build
+    - python3 -m build
   artifacts:
     paths:
       - /dist/*
