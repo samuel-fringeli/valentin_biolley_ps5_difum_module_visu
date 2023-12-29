@@ -20,11 +20,15 @@ build:
     - python3 -m venv myenv
     - . myenv/bin/activate
     - pip install --upgrade pip
-    - pip install build
-    - python3 -m build
+    - pip install hatchling
+
+
+    - hatchling build
+
   artifacts:
     paths:
-      - dist/
+      - dist/*.whl
+      - dist/*.tar.gz
 
 
 
