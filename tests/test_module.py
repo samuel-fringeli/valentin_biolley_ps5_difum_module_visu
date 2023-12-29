@@ -1,9 +1,6 @@
 import unittest
-import sys
 import torch
-sys.path.append('../')
 import PS5_DIFUM_VISU.PS5_DIFUM_VISU as PS5
-
 
 
 
@@ -19,7 +16,7 @@ class compute_cosine_similarities(unittest.TestCase):
     def test_normal_usage(self):
         res = PS5.compute_cosine_similarities(t1, 0)
         self.assertEqual(t1.size(0), len(res))
-        self.assertAlmostEqual(res[0], 1.0,places=4)
+        self.assertAlmostEqual(res[0], 1.0, places=4)
 
     def test_normal_usage_2_tensors(self):
         res = PS5.compute_cosine_similarities(t1, 0, t2)
@@ -38,7 +35,7 @@ class TestGetTSNE(unittest.TestCase):
 
     def test_get_TSNE_2D(self):
         res = PS5.get_TSNE(t5, component=2)
-        self.assertEqual(res.shape, (t5.size(0),2))
+        self.assertEqual(res.shape, (t5.size(0), 2))
 
     def test_get_TSNE_3D(self):
         res = PS5.get_TSNE(t1, component=2)

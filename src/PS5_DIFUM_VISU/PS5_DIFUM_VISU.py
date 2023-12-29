@@ -18,7 +18,6 @@ from PIL import Image
 import os
 from transformers import AutoImageProcessor, PreTrainedTokenizerBase, PreTrainedModel
 
-
 class MyTokenizer:
     def __init__(self, tokenizer: PreTrainedTokenizerBase):
         if isinstance(tokenizer, PreTrainedTokenizerBase):
