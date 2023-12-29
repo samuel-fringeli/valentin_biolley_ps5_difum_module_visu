@@ -21,8 +21,6 @@ build:
     - source myenv/bin/activate
     - pip install --upgrade pip
     - pip install -r requirements.txt
-    - pip install build
-    - pip install --upgrade build
     - py -m build
   artifacts:
     paths:
