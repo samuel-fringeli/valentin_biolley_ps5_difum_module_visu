@@ -22,6 +22,7 @@ build:
     - pip install --upgrade pip
     - pip install -r requirements.txt
     - pip install build
+    - pip install --upgrade build
     - python -m build
   artifacts:
     paths:
