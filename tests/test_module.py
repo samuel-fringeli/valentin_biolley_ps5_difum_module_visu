@@ -1,6 +1,8 @@
 import unittest
 import torch
-from PS5_DIFUM_VISU import PS5_DIFUM_VISU as PS5
+
+from src.PS5_DIFUM_VISU import PS5_DIFUM_VISU as PS5
+
 
 t1 = torch.randn(10, 7, 400)
 t2 = torch.randn(10, 70, 400)
