@@ -23,7 +23,7 @@ build:
     - pip install -r requirements.txt
     - pip install build
     - pip install --upgrade build
-    - python -m build
+    - py -m build
   artifacts:
     paths:
       - /dist/*
