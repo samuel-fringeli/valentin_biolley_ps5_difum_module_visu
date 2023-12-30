@@ -146,7 +146,7 @@ def get_TSNE(embeddings, component=2):
     Compute the TSNE of a tensor, reduce the dimension to n_component
 
     Parameters:
-        embeddings (tensor): Tensor who represent the labels
+        embeddings (tensor): Tensor who represent the labels (min length = 3)
 
     Returns:
         text_embeddings_TSNE (numpy.ndarray nD): An array nD who represent the tensor.

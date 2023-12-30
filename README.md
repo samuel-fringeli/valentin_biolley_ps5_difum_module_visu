@@ -6,14 +6,14 @@ Ce guide a pour but de démontrer l'utilisation du module de visualisation PS5_D
 
 
 ### Structure:
-Ce module de visualisation regroupe les résultats des travaux fait dans le notebook suivant: https://gitlab.forge.hefr.ch/valentin.biolley/detecteur_incendie_ou_de_fumee_utilisant_les_foundation_models/-/blob/main/src/Grounding_dino_simple_NB/PS5_DFUM_VISU.ipynb?ref_type=heads 
+Ce module de visualisation regroupe les résultats des travaux faits dans le notebook suivant: https://gitlab.forge.hefr.ch/valentin.biolley/detecteur_incendie_ou_de_fumee_utilisant_les_foundation_models/-/blob/main/src/Grounding_dino_simple_NB/PS5_DFUM_VISU.ipynb?ref_type=heads 
  
 Le notebook utilise les encodeurs Bert pour le text et Swin pour l'image. 
 
 Différents labels utilisés pour les tests se trouvent dans le dossier "file"
 ainsi que des images de tests se trouvent dans le dossier "images_fire_not_fire"
 
-Ensuite ce notebook met à disposition pleins d'outils permettant de manipuler les vecteurs d'embeddings. La documentation des entrées sorties de chaqu'une de ces fonctions se trouvent dans le notebook.
+Ensuite, ce notebook met à disposition des outils permettant de manipuler les vecteurs d'embeddings. La documentation des entrées sorties de chaqu'une de ces fonctions se trouvent dans le notebook.
 
 Voici quelques méthodes utiles pour la générer les données nécessaires à la visualisation :
 
@@ -26,16 +26,18 @@ Voici quelques méthodes utiles pour la générer les données nécessaires à l
 
 ## Getting started
 ### Installation du module
-Pour pouvoir installer le module de visualisation, il faut le charger depuis le git grâce à la commande suivante :
+Pour pouvoir installer le module de visualisation, il faut le charger depuis le repository git grâce à la commande suivante :
 ```bash
 pip install git+https://gitlab.forge.hefr.ch/valentin.biolley/ps5_difum_module_visu
 ```
 ### Import du module
+Voici comment importer le module pour pouvoir l'utiliser.
 ```python
 from PS5_DIFUM_VISU import PS5_DIFUM_VISU as PS5
 ```
 
 ### Exemple d'utilisation
+Voici un exemple d'utilisation du module de visualisation.
 ```python
 from PS5_DIFUM_VISU import PS5_DIFUM_VISU as PS5
 # read file to get labels
