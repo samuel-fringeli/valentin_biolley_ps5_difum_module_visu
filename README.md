@@ -6,14 +6,12 @@ Ce guide a pour but de démontrer l'utilisation du module de visualisation PS5_D
 
 
 ### Structure:
-Ce module de visualisation regroupe les résultats des travaux faits dans le notebook suivant: https://gitlab.forge.hefr.ch/valentin.biolley/detecteur_incendie_ou_de_fumee_utilisant_les_foundation_models/-/blob/main/src/Grounding_dino_simple_NB/PS5_DFUM_VISU.ipynb?ref_type=heads 
- 
-Le notebook utilise les encodeurs Bert pour le text et Swin pour l'image. 
+Ce module de visualisation regroupe les résultats des travaux faits dans le notebook suivant: https://gitlab.forge.hefr.ch/valentin.biolley/detecteur_incendie_ou_de_fumee_utilisant_les_foundation_models/-/blob/main/src/Grounding_dino_simple_NB/PS5_DFUM_VISU.ipynb?ref_type=heads
 
 Différents labels utilisés pour les tests se trouvent dans le dossier "file"
 ainsi que des images de tests se trouvent dans le dossier "images_fire_not_fire"
 
-Ensuite, ce notebook met à disposition des outils permettant de manipuler les vecteurs d'embeddings. La documentation des entrées sorties de chaqu'une de ces fonctions se trouvent dans le notebook.
+Ensuite, ce module met à disposition des outils permettant de manipuler les vecteurs d'embeddings. La documentation des entrées sorties de chacune de ces fonctions se trouvent dans le notebook.
 
 Voici quelques méthodes utiles pour la générer les données nécessaires à la visualisation :
 
@@ -37,9 +35,11 @@ from PS5_DIFUM_VISU import PS5_DIFUM_VISU as PS5
 ```
 
 ### Exemple d'utilisation
-Voici un exemple d'utilisation du module de visualisation.
+Voici un exemple d'utilisation du module de visualisation. Pour que le module soit le plus modulable possible, le module utilise des classes génériques permettant de prendre en entrée n'import quel modèle permettant la génération des embeddings de text ou d'image, il existe une classe générique pour le text et une pour les images, respectivement MyModel_text et MyModel_img
 ```python
 from PS5_DIFUM_VISU import PS5_DIFUM_VISU as PS5
+model = BertModel.from_pretrained("bert-base-uncased", add_pooling_layer=False, config=config)
+tokenizer = AutoTokenizer.from_pretrained("bert-base-uncased")
 # read file to get labels
 LABELS_FIRE=PS5.read_file_label("./File/label_fire.txt")
 LABELS_FIRE_OPPOSITE=PS5.read_file_label("./File/label_fire_opposite.txt")
