@@ -14,40 +14,35 @@ from sklearn.decomposition import PCA
 import pandas as pd
 import plotly.express as px
 import plotly.graph_objects as go
-from PIL import Image
 import os
-from transformers import AutoImageProcessor, PreTrainedTokenizerBase, PreTrainedModel
 
-class MyTokenizer:
-    def __init__(self, tokenizer: PreTrainedTokenizerBase):
-        if isinstance(tokenizer, PreTrainedTokenizerBase):
-            self.tokenizer = tokenizer
-        else:
-            raise ValueError("The 'tokenizer' argument must be an instance of PreTrainedTokenizerBase.")
+from abc import ABC, abstractmethod
 
-    def tokenize_labels(self, labels):
+
+class MyTokenizer(ABC):
+    def __init__(self, tokenizer):
+        self.tokenizer = tokenizer
+
+    @abstractmethod
+    def tokenize_labels(self, labels: list[str]) -> list[str]:
         """Tokenize the given labels
 
         Args:
             labels(list[str]): The labels to tokenize
-            tokenizer(object): Model tokenizer
 
         Returns:
             list: The list of tokens
         """
-        resArray = []
-        for label in labels:
-            tokens = self.tokenizer(label, return_tensors="pt")
-            resArray.append(self.tokenizer.convert_ids_to_tokens(tokens["input_ids"].squeeze().tolist()))
-        return resArray
+        pass
 
 
-class MyModel_text:
-    def __init__(self, model: PreTrainedModel, tokenizer: PreTrainedTokenizerBase):
+class MyModel_text(ABC):
+    def __init__(self, model, tokenizer):
         self.model = model
         self.tokenizer = tokenizer
 
-    def get_txt_embedding(self, labels):
+    @abstractmethod
+    def get_txt_embedding(self, labels: list[str]) -> torch.Tensor:
         """Computes the embeddings for the given labels
 
     Args:
@@ -58,18 +53,16 @@ class MyModel_text:
     Returns:
         tensor: The tensor of encoded labels
         """
-        tokens = self.tokenizer(labels, return_tensors="pt", padding=True, truncation=True)
-        outputs = self.model(**tokens)
-        embeddings = outputs.last_hidden_state
-        return embeddings
+        pass
 
 
-class MyModel_img:
-    def __init__(self, model: PreTrainedModel, image_processor: AutoImageProcessor.from_pretrained):
+class MyModel_img(ABC):
+    def __init__(self, model, image_processor):
         self.model = model
         self.image_processor = image_processor
 
-    def get_img_embedding(self, urls):
+    @abstractmethod
+    def get_img_embedding(self, urls: list[str]) -> torch.Tensor:
         """Computes the embeddings for the given image locate in urls
 
     Args:
@@ -79,27 +72,7 @@ class MyModel_img:
         tensor: The tensor of encoded images
      """
 
-        embeddings_img = []
-
-        for image_path in urls:
-            if image_path.lower().endswith('.png'):
-                image = Image.open(image_path)
-                image = image.convert('RGB')
-                new_image_path = os.path.splitext(image_path)[0] + ".jpg"
-                image.save(new_image_path)
-                image = Image.open(new_image_path)
-            else:
-                image = Image.open(image_path)
-
-            inputs = self.image_processor(image, return_tensors="pt")
-
-            with torch.no_grad():
-                outputs = self.model(**inputs)
-                embedding = outputs.last_hidden_state.mean(dim=1).squeeze()
-                embeddings_img.append(embedding)
-
-        tensor_embeddings = torch.stack(embeddings_img)
-        return tensor_embeddings
+    pass
 
 
 def compute_cosine_similarities(embeddings_1, ref_label_idx=0, embeddings_2=None):
