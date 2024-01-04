@@ -8,8 +8,7 @@ dependencies = [
     "scikit-learn~=1.3.0",
     "pillow~=9.4.0",
     "transformers~=4.36.2",
-    "torch",
-    "abc"
+    "torch"
 ]
 authors = [
   { name="Biolley Valentin", email="valentin.biolley@edu.hefr.ch" },
