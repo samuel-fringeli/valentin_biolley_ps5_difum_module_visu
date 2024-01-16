@@ -7,22 +7,19 @@ Autor : Biolley
 Email : valentin.biolley@edu.hefr.ch
 Date : 15.12.23
 """
+import os
+from abc import ABC, abstractmethod
+
 import numpy as np
-import torch
-from sklearn.manifold import TSNE
-from sklearn.decomposition import PCA
 import pandas as pd
 import plotly.express as px
 import plotly.graph_objects as go
-import os
-
-from abc import ABC, abstractmethod
+import torch
+from sklearn.decomposition import PCA
+from sklearn.manifold import TSNE
 
 
 class MyTokenizer(ABC):
-    def __init__(self, tokenizer):
-        self.tokenizer = tokenizer
-
     @abstractmethod
     def tokenize_labels(self, labels: list[str]) -> list[str]:
         """Tokenize the given labels
@@ -37,10 +34,6 @@ class MyTokenizer(ABC):
 
 
 class MyModel_text(ABC):
-    def __init__(self, model, tokenizer):
-        self.model = model
-        self.tokenizer = tokenizer
-
     @abstractmethod
     def get_txt_embedding(self, labels: list[str]) -> torch.Tensor:
         """Computes the embeddings for the given labels
@@ -57,10 +50,6 @@ class MyModel_text(ABC):
 
 
 class MyModel_img(ABC):
-    def __init__(self, model, image_processor):
-        self.model = model
-        self.image_processor = image_processor
-
     @abstractmethod
     def get_img_embedding(self, urls: list[str]) -> torch.Tensor:
         """Computes the embeddings for the given image locate in urls
@@ -75,7 +64,7 @@ class MyModel_img(ABC):
     pass
 
 
-def compute_cosine_similarities(embeddings_1, ref_label_idx=0, embeddings_2=None):
+def compute_cosine_similarities(embeddings_1: torch.Tensor, ref_label_idx=0, embeddings_2=None):
     """
     Compute similarities between a reference label and a list of labels using embeddings (txt or images).
 
@@ -114,11 +103,12 @@ def compute_cosine_similarities(embeddings_1, ref_label_idx=0, embeddings_2=None
     return similarities
 
 
-def get_TSNE(embeddings, component=2):
+def get_TSNE(embeddings: torch.Tensor, component=2):
     """
     Compute the TSNE of a tensor, reduce the dimension to n_component
 
     Parameters:
+        component:
         embeddings (tensor): Tensor who represent the labels (min length = 3)
 
     Returns:
@@ -144,7 +134,7 @@ def get_TSNE(embeddings, component=2):
     return embeddings
 
 
-def get_PCA(embeddings, component=2):
+def get_PCA(embeddings: torch.Tensor, component=2):
     """
     Compute the PCA of a tensor, reduce the dimension to n_component.
 
@@ -172,7 +162,7 @@ def get_PCA(embeddings, component=2):
     return embeddings
 
 
-def read_file_label(url_file):
+def read_file_label(url_file: list[str]):
     """Read label in a file
 
     Args:
@@ -187,7 +177,7 @@ def read_file_label(url_file):
         return lines
 
 
-def read_dir_image(url_dir):
+def read_dir_image(url_dir: list[str]):
     """Read images present in directory and build urls to access all images
 
     Args:
@@ -206,7 +196,7 @@ def read_dir_image(url_dir):
     return res
 
 
-def save_tensor(embedding, label, path):
+def save_tensor(embedding: torch.Tensor, label: str, path: str):
     """Save a tensor on /path_label.pt on disk
 
     Args:
@@ -220,7 +210,7 @@ def save_tensor(embedding, label, path):
     torch.save(embedding, path + "_" + label + ".pt")
 
 
-def load_tensor(path, label):
+def load_tensor(path: str, label: str):
     """Load tensor from disk
 
     Args:
@@ -246,22 +236,24 @@ def load_tensor(path, label):
     return tensors, labels
 
 
-def create_data_set_for_vis(embeddings, input_name, label=0, ref_label_idx=0):
+def create_data_set_for_vis(embeddings: list[torch.Tensor], label=0 , input_name=0,
+                            ref_label_idx=0):
     """Computes the dataframe to help the visualisation with plotly, use the return of this function as input of the fonction visualise_embedding
 
     Args:
         embeddings(list[tensor]): list of tensors to display
-        input_name(list[string): List of name of embeddings use for display name of points (same size of embeddings)
+        input_name(list[string): List of name of embeddings use for display name of points (same size of embeddings). Default is 0
         label(list[string],optional): Labels use for display the color of points (same size of embeddings)
         ref_label_idx (int, optional): The index of the reference label for which to calculate similarities. Default is 0
     Returns:
         Raise ValueError: If embeddings,input_name and label haven't the same size
         dataframe: The dataFrame of all data we need to create graph
     """
-    # Check size of embeddinds,input_name,label, if not equals raise an error
-    if len(embeddings) != len(input_name):
-        raise ValueError("Size of embeddings (", len(embeddings), ") and size of prompt(", len(input_name),
-                         ") is not equals")
+    # Check size of embeddings,input_name,label, if not equals raise an error
+    if input_name != 0:
+        if len(embeddings) != len(input_name):
+            raise ValueError("Size of embeddings (", len(embeddings), ") and size of prompt(", len(input_name),
+                             ") is not equals")
     if label != 0:
         if len(embeddings) != len(label):
             raise ValueError("Size of embeddings (", len(embeddings), ") and size of label(", len(label),
@@ -283,11 +275,14 @@ def create_data_set_for_vis(embeddings, input_name, label=0, ref_label_idx=0):
         data_to_vis_temp["embedding_X_3D"] = txt_embedding_tsne_3_componnent[:, 0]
         data_to_vis_temp["embedding_y_3D"] = txt_embedding_tsne_3_componnent[:, 1]
         data_to_vis_temp["embedding_z_3D"] = txt_embedding_tsne_3_componnent[:, 2]
-        data_to_vis_temp["prompt"] = input_name[i]
         data_to_vis_temp["similarity"] = similarity
         # if no label is given
         if label != 0:
             data_to_vis_temp["label"] = label[i]
+        if input_name != 0:
+            data_to_vis_temp["prompt"] = input_name[i]
+        else:
+            data_to_vis_temp["prompt"] = "no_prompt_name"
         # concate this dataFrame to dataframe for result
         data_to_vis = pd.concat([data_to_vis, data_to_vis_temp], ignore_index=True)
         i += 1
@@ -410,3 +405,14 @@ def visualise_embedding(data, ref_label_idx=0):
                       scene=dict(xaxis=dict(title='embedding_X'), yaxis=dict(title='embedding_Y'),
                                  zaxis=dict(title='embedding_Z')))
     fig.show()
+
+# compute random tensor for example
+embeddings_1 = torch.rand((10, 100, 400))
+embeddings_2 = torch.rand((19, 10, 400))
+# Classe of point
+labels=["Test","Test2"]
+all_embeddings=[embeddings_1,embeddings_2]
+# create dataset to simplify generation of graphe
+data_to_visu = create_data_set_for_vis(all_embeddings,label=labels)
+# generate graphe with dataset
+visualise_embedding(data_to_visu)
