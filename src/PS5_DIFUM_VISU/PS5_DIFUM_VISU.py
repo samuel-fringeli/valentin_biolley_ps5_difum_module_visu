@@ -405,14 +405,3 @@ def visualise_embedding(data, ref_label_idx=0):
                       scene=dict(xaxis=dict(title='embedding_X'), yaxis=dict(title='embedding_Y'),
                                  zaxis=dict(title='embedding_Z')))
     fig.show()
-
-# compute random tensor for example
-embeddings_1 = torch.rand((10, 100, 400))
-embeddings_2 = torch.rand((19, 10, 400))
-# Classe of point
-labels=["Test","Test2"]
-all_embeddings=[embeddings_1,embeddings_2]
-# create dataset to simplify generation of graphe
-data_to_visu = create_data_set_for_vis(all_embeddings,label=labels)
-# generate graphe with dataset
-visualise_embedding(data_to_visu)
