@@ -1,6 +1,6 @@
 [project]
 name = "PS5_DIFUM_VISU"
-version = "0.1.8"
+version = "0.1.9"
 dependencies = [
     "numpy~=1.26.0",
     "pandas~=2.1.1",
@@ -8,8 +8,8 @@ dependencies = [
     "scikit-learn~=1.3.0",
     "pillow~=9.4.0",
     "transformers~=4.36.2",
-    "torch==2.0.1",
-    "torchvision==0.15.2",
+    "torch~=2.0.1",
+    "torchvision~==0.15.2",
     "nbformat>=4.2.0"
 ]
 authors = [
