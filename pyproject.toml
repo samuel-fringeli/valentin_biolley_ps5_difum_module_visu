@@ -9,7 +9,7 @@ dependencies = [
     "pillow~=9.4.0",
     "transformers~=4.36.2",
     "torch~=2.0.1",
-    "torchvision~==0.15.2",
+    "torchvision~=0.15.2",
     "nbformat>=4.2.0"
 ]
 authors = [
