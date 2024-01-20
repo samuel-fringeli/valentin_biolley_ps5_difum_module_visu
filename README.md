@@ -49,8 +49,8 @@ Voici un exemple basique d'utilisation du module. Dans cet exemple 2 tenseurs so
 ```python
 from PS5_DIFUM_VISU import PS5_DIFUM_VISU as PS5
 # compute random tensor for example
-embeddings_1 = torch.rand((10, 100, 400))
-embeddings_2 = torch.rand((19, 10, 400))
+embeddings_1 = PS5.torch.rand((10, 100, 400))
+embeddings_2 = PS5.torch.rand((19, 100, 400))
 # Classe of point (color on graphe)
 labels=["Test","Test2"]
 all_embeddings=[embeddings_1,embeddings_2]
@@ -58,6 +58,7 @@ all_embeddings=[embeddings_1,embeddings_2]
 data_to_visu = PS5.create_data_set_for_vis(all_embeddings,label=labels)
 # generate graphe with dataset
 PS5.visualise_embedding(data_to_visu)
+
 ```
 #### Résultats attendus
 Le module génère trois graphiques différents :
